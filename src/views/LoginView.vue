@@ -9,6 +9,8 @@ const form = ref({
 })
 const errorMsg = ref('')
 
+const getUserList = () => JSON.parse(localStorage.getItem('userList') || '[]')
+
 const handleLogin = () => {
   errorMsg.value = ''
 
@@ -22,9 +24,18 @@ const handleLogin = () => {
     return
   }
 
+  const list = getUserList()
+  const user = list.find((item) => item.account === form.value.account && item.password === form.value.password)
+  if (!user) {
+    errorMsg.value = '账号或密码错误'
+    return
+  }
+
   localStorage.setItem('isLogin', 'true')
-  localStorage.setItem('userName', 'Neon Rider')
+  localStorage.setItem('nowUser', JSON.stringify(user))
+  alert('登录成功')
   router.push('/')
+  location.reload()
 }
 </script>
 
@@ -46,6 +57,7 @@ const handleLogin = () => {
         <p class="error-msg">{{ errorMsg }}</p>
         <button class="btn btn-primary btn-block" type="submit">立即登录</button>
       </form>
+      <p class="tip">没有账号？<router-link to="/register">去注册</router-link></p>
     </div>
   </section>
 </template>
